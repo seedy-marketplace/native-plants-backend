@@ -148,7 +148,7 @@ def main():
 
 
 def get_app():
-    return BackendRESTAPI(port=int(os.environ['PORT']), norun=True)
+    return BackendRESTAPI(port_num=int(os.environ['PORT']), norun=True)
 
 
 if __name__ == "__main__":
