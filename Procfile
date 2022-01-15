@@ -1,1 +1,1 @@
-web: gunicorn postresql_backend:application
+web: gunicorn backend.postresql_backend:get_app($PORT)
