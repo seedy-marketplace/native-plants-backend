@@ -1,1 +1,1 @@
-worker: python postresql_backend.py
+web: python app/postresql_backend.py
