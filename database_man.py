@@ -9,21 +9,24 @@ class DatabaseConnection():
     def __init__(self):
         try:
             # Fetch credentials from the environment
-            self.host_name = os.environ["DB_HOST_NAME"]
+            """ self.host_name = os.environ["DB_HOST_NAME"]
             self.db_user   = os.environ["DB_USER"]
             self.db_pass   = os.environ["DB_PASS"]
-            self.db_name   = os.environ["DB_NAME"]
+            self.db_name   = os.environ["DB_NAME"] """
+
+            self.DATABASE_URL = os.environ['DATABASE_URL']
         except KeyError:
             # If >= 1 of the credentials are missing,
             print("Set environment variables DB_HOST_NAME, DB_USER, DB_PASS, DB_NAME", file=stderr)
             exit(1)
         
         # Connect to the database
-        self.connection = db_con.connect(
+        """ self.connection = db_con.connect(
             host=self.host_name, 
             user=self.db_user, 
             password=self.db_pass, 
-            database=self.db_name)
+            database=self.db_name) """
+        self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
         self.cursor = self.connection.cursor()
         # Set the override for decimal type (maybe datetimes in future?)
         json.JSONEncoder.default = self.default
