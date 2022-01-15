@@ -1,1 +1,1 @@
-web: gunicorn3 postresql_backend:application
+web: gunicorn postresql_backend:application
