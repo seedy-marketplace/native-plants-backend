@@ -1,1 +1,1 @@
-web: python3 postresql_backend.py $PORT
+web: python postresql_backend.py

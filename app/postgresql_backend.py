@@ -141,7 +141,7 @@ def main():
     if len(argv) > 1:
         BackendRESTAPI(int(argv[1]))
     else:
-        BackendRESTAPI(os.environ['PORT'])
+        BackendRESTAPI(int(os.environ['PORT']))
 
 
 if __name__ == "__main__":
