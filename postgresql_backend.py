@@ -139,19 +139,11 @@ class BackendRESTAPI():
             return app
 
 
-def main():
-    # May change argv passing to env variables
-    if len(argv) > 1:
-        BackendRESTAPI(int(argv[1]))
-    else:
-        BackendRESTAPI(int(os.environ['PORT']))
+def get_app(port):
+    return BackendRESTAPI(port_num=int(port), norun=True)
 
 
-def get_app():
-    return BackendRESTAPI(port_num=int(os.environ['PORT']), norun=True)
-
-
-if __name__ == "__main__":
-    main()
-else:
-    application = get_app()
+try: 
+    application = get_app(os.environ['PORT'])
+except KeyError:
+    application = get_app(8080)
