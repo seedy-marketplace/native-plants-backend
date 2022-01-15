@@ -1,1 +1,1 @@
-web: python app/postresql_backend:application
+web: python postresql_backend:application
