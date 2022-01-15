@@ -135,8 +135,6 @@ class BackendRESTAPI():
                 # Production server
                 http_server = WSGIServer((self.host, self.port_number), app)
                 http_server.serve_forever()
-        else:
-            return app
 
 
 def get_app(port):

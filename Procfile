@@ -1,1 +1,1 @@
-web: gunicorn backend.postgresql_backend:application
+web: gunicorn backend.postgresql_backend:app
