@@ -142,8 +142,7 @@ class BackendRESTAPI():
 def get_app(port):
     return BackendRESTAPI(port_num=int(port), norun=True)
 
-if __name__ == "__main__":
-    try: 
-        application = get_app(os.environ['PORT'])
-    except KeyError:
-        application = get_app(8080)
+try: 
+    application = get_app(os.environ['PORT'])
+except KeyError:
+    application = get_app(8080)
