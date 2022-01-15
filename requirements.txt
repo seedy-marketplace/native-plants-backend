@@ -2,3 +2,4 @@ flask
 gevent
 psycopg2
 gunicorn
+gunicorn3
