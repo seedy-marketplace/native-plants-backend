@@ -19,11 +19,11 @@ def grab_val(request, value):
         return None
 
 class BackendRESTAPI():
-    def __init__(self, port_num=5440):
+    def __init__(self, port_num=5440, norun=False):
         self.db_connection = DatabaseConnection()
         self.port_number    = port_num
         self.host           = "localhost"
-        self.devenv         = False
+        self.devenv         = True
         try:
             self.pepper = os.environ["PEPPER"]
         except KeyError:
@@ -127,13 +127,16 @@ class BackendRESTAPI():
             except:
                 print("error in add collection:", sys.exc_info())
         # Start the server
-        if self.devenv:
-            # Development server
-            app.run(host=self.host, port=self.port_number, debug=True, use_reloader=True)
+        if not norun:
+            if self.devenv:
+                # Development server
+                app.run(host=self.host, port=self.port_number, debug=True, use_reloader=True)
+            else:
+                # Production server
+                http_server = WSGIServer((self.host, self.port_number), app)
+                http_server.serve_forever()
         else:
-            # Production server
-            http_server = WSGIServer((self.host, self.port_number), app)
-            http_server.serve_forever()
+            return app
 
 
 def main():
@@ -142,6 +145,9 @@ def main():
         BackendRESTAPI(int(argv[1]))
     else:
         BackendRESTAPI(int(os.environ['PORT']))
+
+def get_app():
+    return BackendRESTAPI(port=int(os.environ['PORT']), norun=True)
 
 
 if __name__ == "__main__":
