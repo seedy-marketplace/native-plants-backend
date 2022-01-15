@@ -23,7 +23,7 @@ class BackendRESTAPI():
         self.db_connection = DatabaseConnection()
         self.port_number    = port_num
         self.host           = "localhost"
-        self.devenv         = True
+        self.devenv         = False
         try:
             self.pepper = os.environ["PEPPER"]
         except KeyError:
