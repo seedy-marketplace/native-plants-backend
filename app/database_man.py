@@ -46,7 +46,7 @@ class DatabaseConnection():
     def get_password_hash(self, username):
         # Get the password hash for a user
         username = self.clean_query(username)
-        print(f'{username=}')
+        print(f'username={username}')
         self.cursor.execute("SELECT password_hash FROM rev2.users WHERE user_name = %s", [username])
         try:
            return self.cursor.fetchone()[0]
