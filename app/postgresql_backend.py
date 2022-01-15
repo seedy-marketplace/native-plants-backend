@@ -146,6 +146,7 @@ def main():
     else:
         BackendRESTAPI(int(os.environ['PORT']))
 
+
 def get_app():
     return BackendRESTAPI(port=int(os.environ['PORT']), norun=True)
 
