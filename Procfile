@@ -1,1 +1,1 @@
-web: python postresql_backend:application
+web: gunicorn postresql_backend:application
