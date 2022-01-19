@@ -36,8 +36,11 @@ class DatabaseConnection():
         self.cursor.execute(query, user_input)
         if include_headers:
             columns = [column[0] for column in self.cursor.description]
-            return columns, self.cursor.fetchall()
-        return self.cursor.fetchall()
+            res = columns, self.cursor.fetchall()
+        else:
+            res = self.cursor.fetchall()
+        self.connection.rollback()
+        return res
     def execute_insert(self, query : str, user_input : list):
         # Execute the query and return the results
         user_input = [self.clean_query(i) for i in user_input]

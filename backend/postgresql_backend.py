@@ -144,3 +144,6 @@ try:
     application = get_app(os.environ['PORT'])
 except KeyError:
     application = get_app(8080)
+
+if __name__ == "__main__":
+    app.run(host=application.host, port=application.port_number, debug=True, use_reloader=True)
