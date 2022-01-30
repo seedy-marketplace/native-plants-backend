@@ -32,15 +32,20 @@ class DatabaseConnection():
         json.JSONEncoder.default = self.default
     def execute_query(self, query, user_input="", include_headers=False):
         # Execute the query and return the results
-        user_input = [self.clean_query(i) for i in user_input]            
-        self.cursor.execute(query, user_input)
-        if include_headers:
-            columns = [column[0] for column in self.cursor.description]
-            res = columns, self.cursor.fetchall()
-        else:
-            res = self.cursor.fetchall()
-        self.connection.rollback()
-        return res
+        try:
+            user_input = [self.clean_query(i) for i in user_input]            
+            self.cursor.execute(query, user_input)
+            if include_headers:
+                columns = [column[0] for column in self.cursor.description]
+                res = columns, self.cursor.fetchall()
+            else:
+                res = self.cursor.fetchall()
+            self.connection.rollback()
+            return res
+        except db_con.Error as e:
+            print(f'Error {e}')
+            self.connection.rollback()
+            return {"error": str(e)}
     def execute_insert(self, query : str, user_input : list):
         # Execute the query and return the results
         user_input = [self.clean_query(i) for i in user_input]
