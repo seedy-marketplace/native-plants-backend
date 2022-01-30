@@ -45,7 +45,7 @@ class DatabaseConnection():
         except db_con.Error as e:
             print(f'Error {e}')
             self.connection.rollback()
-            return {"error": str(e)}
+            return "error", str(e)
     def execute_insert(self, query : str, user_input : list):
         # Execute the query and return the results
         user_input = [self.clean_query(i) for i in user_input]
