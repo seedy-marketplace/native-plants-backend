@@ -1,4 +1,5 @@
-import os  # Fetch credentials from the environment
+import os
+from struct import pack  # Fetch credentials from the environment
 import sys
 from sys import argv # Print errors to stderr
 from flask import Flask, json, request  # The framework for backend & dev server
@@ -32,6 +33,7 @@ class BackendRESTAPI():
         try:
             self.pepper = os.environ["PEPPER"]
         except KeyError:
+            print("== MISSING ENV VAR FOR PEPPER ==\n\tSet environment variable PEPPER")
             self.pepper = ""
         
         def pack_header_to_result_obj(headers, result_lsit):
@@ -39,8 +41,13 @@ class BackendRESTAPI():
             res_obj['data'] = []
             for i in range(len(result_lsit)):
                 res_obj['data'].append({})
-                for j in range(len(result_lsit[i])):
-                    res_obj['data'][i][headers[j]] = result_lsit[i][j]
+                if type(result_lsit) is not str:
+                    for j in range(len(result_lsit[i])):
+                        res_obj['data'][i][headers[j]] = result_lsit[i][j]
+                else:
+                    res_obj['error'] = result_lsit
+                    del res_obj['data']
+                    break
             print(res_obj)
             return json.jsonify(res_obj)
 
@@ -53,12 +60,14 @@ class BackendRESTAPI():
         @app.route("/q/<query>", methods=["GET"])
         def query(query):
             header, res = self.db_connection.execute_query(query, include_headers=True)
-            return json.jsonify({"header": header, "results": res})
+            return pack_header_to_result_obj(header, res)
+            # return json.jsonify({"header": header, "results": res})
 
         @app.route("/q/<query>/<user_input>", methods=["GET"])
         def query_with_input(query, user_input):
             header, res = self.db_connection.execute_query(query, user_input, include_headers=True)
-            return json.jsonify({"header": header, "results": res})
+            return pack_header_to_result_obj(header, res)
+            # return json.jsonify({"header": header, "results": res})
         
         @app.route("/u/login", methods=["POST"])
         def login():
@@ -84,6 +93,7 @@ class BackendRESTAPI():
         @app.route("/u/register", methods=["POST"])
         def register():
             try:
+                print(request.form)
                 # Validate the registration
                 if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", request.form["username"]):
                     return json.jsonify({"error": "Invalid char or length in username"})
@@ -112,7 +122,9 @@ class BackendRESTAPI():
                 except:
                     website = ""
                 try:
-                    role_type = request.form["user_role_type"]
+                    # role_type = request.form["user_role_type"]
+                    """ 0 = unapproved, 1 = standard user, 2 = admin """
+                    role_type = 0 
                 except:
                     role_type = "0"
                 
@@ -122,13 +134,12 @@ class BackendRESTAPI():
                 hash_val = hashlib.sha256((self.pepper + salt + request.form["password"]).encode()).hexdigest()
                 password_hash = salt + "$" + hash_val
                 # Execute the query
-                try:
-                    self.db_connection.execute_insert("INSERT INTO rev2.users\
-                        (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
-                        (request.form["username"], bio, request.form["email"], phone,        website, request.form["name"], role_type,      password_hash))
-                    self.db_connection.rollback()
+                success = self.db_connection.execute_insert("INSERT INTO rev2.users\
+                            (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
+                            (request.form["username"], bio, request.form["email"], phone,        website, request.form["name"], role_type,      password_hash))
+                if success:
                     return json.jsonify({"success": True})
-                except errors.UniqueViolation:
+                else:
                     return json.jsonify({"error": "Username already exists"})
             except KeyError:
                 return json.jsonify({"error": "Missing required key in request"})
@@ -141,7 +152,10 @@ class BackendRESTAPI():
                     VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)""", (grab_val(request, "speciescode"), grab_val(request, "collected_date"), grab_val(request, "collection_provenance"), grab_val(request, "id_method"), grab_val(request, "id_person"), grab_val(request, "id_confidence"), grab_val(request, "cleaning_effectiveness"), grab_val(request, "cleaned_weight"), grab_val(request, "collection_history_ref")))
                 return json.jsonify({"success": True})
             except:
+                self.db_connection.rollback()
                 print("error in add collection:", sys.exc_info())
+                return json.jsonify({"success": False})
+
         # Start the server
         if not norun:
             if self.devenv:

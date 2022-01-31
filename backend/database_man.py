@@ -48,9 +48,15 @@ class DatabaseConnection():
             return "error", str(e)
     def execute_insert(self, query : str, user_input : list):
         # Execute the query and return the results
-        user_input = [self.clean_query(i) for i in user_input]
-        self.cursor.execute(query, user_input)
-        self.connection.commit()
+        try:
+            user_input = [self.clean_query(i) for i in user_input]
+            self.cursor.execute(query, user_input)
+            self.connection.commit()
+            return True
+        except db_con.errors.UniqueViolation as e:
+            print(f'Error {e}')
+            self.connection.rollback()
+            return False
     def get_password_hash(self, username):
         # Get the password hash for a user
         username = self.clean_query(username)
