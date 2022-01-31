@@ -5,7 +5,12 @@ from flask import Flask, json, request  # The framework for backend & dev server
 from gevent.pywsgi import WSGIServer  # The production server for backend
 import re # Regular expression for validation of input
 import hashlib  # For hashing passwords
-from backend.database_man import DatabaseConnection
+from psycopg2 import errors
+try:
+    from backend.database_man import DatabaseConnection
+except ModuleNotFoundError:
+    from database_man import DatabaseConnection
+
 
 
 app = Flask(__name__)  # Create the flask app
@@ -29,11 +34,21 @@ class BackendRESTAPI():
         except KeyError:
             self.pepper = ""
         
+        def pack_header_to_result_obj(headers, result_lsit):
+            res_obj = {'headers': headers}
+            res_obj['data'] = []
+            for i in range(len(result_lsit)):
+                res_obj['data'].append({})
+                for j in range(len(result_lsit[i])):
+                    res_obj['data'][i][headers[j]] = result_lsit[i][j]
+            print(res_obj)
+            return json.jsonify(res_obj)
+
         @app.route("/", methods=["GET"])
         def index():
             header, res = self.db_connection.execute_query(
                 "SELECT * FROM rev2.users", include_headers=True)
-            return json.jsonify({"header": header, "data": res})
+            return pack_header_to_result_obj(header, res)
 
         @app.route("/q/<query>", methods=["GET"])
         def query(query):
@@ -111,8 +126,9 @@ class BackendRESTAPI():
                     self.db_connection.execute_insert("INSERT INTO rev2.users\
                         (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
                         (request.form["username"], bio, request.form["email"], phone,        website, request.form["name"], role_type,      password_hash))
+                    self.db_connection.rollback()
                     return json.jsonify({"success": True})
-                except db_con.errors.UniqueViolation:
+                except errors.UniqueViolation:
                     return json.jsonify({"error": "Username already exists"})
             except KeyError:
                 return json.jsonify({"error": "Missing required key in request"})
