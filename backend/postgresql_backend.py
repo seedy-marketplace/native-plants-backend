@@ -156,6 +156,14 @@ class BackendRESTAPI():
                 print("error in add collection:", sys.exc_info())
                 return json.jsonify({"success": False})
 
+        @app.after_request()
+        def add_header(response):
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            response.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+            return response
+
+
         # Start the server
         if not norun:
             if self.devenv:
