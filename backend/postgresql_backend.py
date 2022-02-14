@@ -1,7 +1,8 @@
 import os
 from struct import pack  # Fetch credentials from the environment
 import sys
-from sys import argv # Print errors to stderr
+from sys import argv
+from urllib import response # Print errors to stderr
 from flask import Flask, json, request  # The framework for backend & dev server
 from gevent.pywsgi import WSGIServer  # The production server for backend
 import re # Regular expression for validation of input
@@ -156,7 +157,7 @@ class BackendRESTAPI():
                 print("error in add collection:", sys.exc_info())
                 return json.jsonify({"success": False})
 
-        @app.after_request()
+        @app.after_request
         def add_header(response):
             response.headers["Access-Control-Allow-Origin"] = "*"
             response.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
