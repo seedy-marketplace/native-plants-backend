@@ -158,6 +158,22 @@ class BackendRESTAPI():
             except KeyError:
                 return json.jsonify({"error": "Missing required key in request"})
 
+        @app.route("/add/farm", methods=["POST"])
+        def add_farm():
+            farm_name = request.form["farm_name"]
+            farm_location = request.form["farm_location"] or ""
+            contact_email = request.form["contact_email"] or ""
+            contact_phone = request.form["contact_phone_number"] or 0
+            if farm_name is None:
+                return json.jsonify({"error": "Missing farm name"})
+            try: 
+                DatabaseConnection.execute_insert("INSERT INTO rev2.farms (farm_name, farm_location, contact_email, contact_phone) VALUES (%s, %s, %s, %s)", (farm_name, farm_location, contact_email, contact_phone))
+                return json.jsonify({"success": True})
+            except:
+                self.db_connection.rollback()
+                print("error in add farm: ", sys.exc_info())
+                return json.jsonify({"error": "Internal error occured"})
+
         @app.route("/collector/add-collection", methods=["POST"])
         def add_collection():
             try:
