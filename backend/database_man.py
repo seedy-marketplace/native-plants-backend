@@ -48,6 +48,8 @@ class DatabaseConnection():
             return "error", str(e)
     def execute_insert(self, query : str, user_input : list):
         # Execute the query and return the results
+        print("Executing query: ", query)
+        print("With user input: ", user_input)
         try:
             user_input = [self.clean_query(i) for i in user_input]
             if (len(user_input) > 0):
