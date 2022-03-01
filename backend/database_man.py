@@ -50,7 +50,10 @@ class DatabaseConnection():
         # Execute the query and return the results
         try:
             user_input = [self.clean_query(i) for i in user_input]
-            self.cursor.execute(query, user_input)
+            if (len(user_input) > 0):
+                self.cursor.execute(query, user_input)
+            else:
+                self.cursor.execute(query)
             self.connection.commit()
             return True
         except db_con.errors.UniqueViolation as e:
