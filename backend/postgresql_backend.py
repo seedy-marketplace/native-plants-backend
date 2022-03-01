@@ -63,6 +63,12 @@ class BackendRESTAPI():
             header, res = self.db_connection.execute_query(query, include_headers=True)
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
+        
+        @app.route("/i/<query>", methods=["POST"])
+        def insert(query):
+            header, res = self.db_connection.execute_insert(query, include_headers=True)
+            return pack_header_to_result_obj(header, res)
+            # return json.jsonify({"header": header, "results": res})
 
         @app.route("/q/<query>/<user_input>", methods=["GET"])
         def query_with_input(query, user_input):
