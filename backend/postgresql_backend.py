@@ -73,8 +73,8 @@ class BackendRESTAPI():
         @app.route("/i/<query>/<csv_values>", methods=["POST"])
         def insert_with_input(query, csv_values):
             user_input = csv_values.split(',')
-            header, res = self.db_connection.execute_insert(query, user_input)
-            return pack_header_to_result_obj(header, res)
+            res = self.db_connection.execute_insert(query, user_input)
+            return json.jsonify({"success": res })
             # return json.jsonify({"header": header, "results": res})
 
         @app.route("/q/<query>/<user_input>", methods=["GET"])
@@ -160,6 +160,8 @@ class BackendRESTAPI():
 
         @app.route("/add/farm", methods=["POST"])
         def add_farm():
+            print(request.headers)
+
             try:
                 farm_name = request.form["farm_name"]
             except KeyError:
@@ -178,9 +180,12 @@ class BackendRESTAPI():
                 contact_phone = ""
                 
             try: 
-                self.db_connection.execute_insert("INSERT INTO rev2.farms (farm_name,  contact_email, contact_phone_number) VALUES (%s, %s, %s)",
+                success = self.db_connection.execute_insert("INSERT INTO rev2.farms (farm_name,  contact_email, contact_phone_number) VALUES (%s, %s, %s)",
                                                                           (farm_name, contact_email, contact_phone))
-                return json.jsonify({"success": True})
+                if success:
+                    return json.jsonify({"success": True})
+                else:
+                    return json.jsonify({"error": "Farm name already exists"})
             except:
                 self.db_connection.connection.rollback()
                 print("error in add farm: ", sys.exc_info())
