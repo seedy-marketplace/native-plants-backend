@@ -53,6 +53,7 @@ class DatabaseConnection():
             if (len(user_input) > 0):
                 self.cursor.execute(query, user_input)
             else:
+                print(f'query={query}')
                 self.cursor.execute(query)
             self.connection.commit()
             return True
