@@ -64,7 +64,7 @@ class BackendRESTAPI():
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
         
-        @app.route("/i/<query>", methods=["POST"]) # this broke
+        """ @app.route("/i/<query>", methods=["POST"]) # this broke
         def insert(query):
             res = self.db_connection.execute_insert(query, '')
             return json.jsonify({"result": res})
@@ -75,7 +75,7 @@ class BackendRESTAPI():
             user_input = csv_values.split(',')
             res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"success": res })
-            # return json.jsonify({"header": header, "results": res})
+            # return json.jsonify({"header": header, "results": res}) """
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET"]) # this broke
         def insert_from_get(query, csv_values):
