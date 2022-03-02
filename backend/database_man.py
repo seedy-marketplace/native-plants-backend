@@ -62,7 +62,7 @@ class DatabaseConnection():
         except db_con.errors.UniqueViolation as e:
             print(f'Error {e}')
             self.connection.rollback()
-            return False
+            return e
     def get_password_hash(self, username):
         # Get the password hash for a user
         username = self.clean_query(username)
