@@ -66,8 +66,8 @@ class BackendRESTAPI():
         
         @app.route("/i/<query>", methods=["POST"]) # this broke
         def insert(query):
-            header, res = self.db_connection.execute_insert(query, '')
-            return pack_header_to_result_obj(header, res)
+            res = self.db_connection.execute_insert(query, '')
+            return json.jsonify({"result": res})
             # return json.jsonify({"header": header, "results": res})
         
         @app.route("/i/<query>/<csv_values>", methods=["POST"])
@@ -206,8 +206,8 @@ class BackendRESTAPI():
         @app.after_request
         def add_header(response):
             response.headers["Access-Control-Allow-Origin"] = "*"
-            """ response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization, Origin, X-Requested-With, Accept'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT, PATCH' """
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization, Origin, X-Requested-With, Accept'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT, PATCH'
             return response
 
 
