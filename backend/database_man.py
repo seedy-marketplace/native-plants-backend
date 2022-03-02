@@ -58,7 +58,7 @@ class DatabaseConnection():
                 print(f'query={query}')
                 self.cursor.execute(query)
             self.connection.commit()
-            return True
+            return "success"
         except db_con.errors.UniqueViolation as e:
             print(f'Error {e}')
             self.connection.rollback()

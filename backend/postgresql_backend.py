@@ -81,7 +81,10 @@ class BackendRESTAPI():
         def insert_from_get(query, csv_values):
             user_input = csv_values.split(',')
             res = self.db_connection.execute_insert(query, user_input)
-            return json.jsonify({"result": res})
+            if res == "success":
+                return json.jsonify({"result": res})
+            else:
+                return json.jsonify({"error": "farm already exists"})
             # return json.jsonify({"header": header, "results": res})
 
         @app.route("/q/<query>/<user_input>", methods=["GET"])
@@ -158,7 +161,7 @@ class BackendRESTAPI():
                 success = self.db_connection.execute_insert("INSERT INTO rev2.users\
                             (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
                             (request.form["username"], bio, request.form["email"], phone,        website, request.form["name"], role_type,      password_hash))
-                if success:
+                if success == "success":
                     return json.jsonify({"success": True})
                 else:
                     return json.jsonify({"error": "Username already exists"})
