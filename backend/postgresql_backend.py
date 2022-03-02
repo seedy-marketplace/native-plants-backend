@@ -4,6 +4,7 @@ import sys
 from sys import argv
 from urllib import response # Print errors to stderr
 from flask import Flask, json, request  # The framework for backend & dev server
+from flask_cors import CORS, cross_origin
 from gevent.pywsgi import WSGIServer  # The production server for backend
 import re # Regular expression for validation of input
 import hashlib  # For hashing passwords
@@ -17,6 +18,7 @@ except ModuleNotFoundError:
 
 app = Flask(__name__)  # Create the flask app
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True  # Pretty print json with newlines
+CORS(app, supports_credentials=True)
 
 
 def grab_val(request, value):
@@ -78,6 +80,7 @@ class BackendRESTAPI():
             # return json.jsonify({"header": header, "results": res}) """
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET"]) # this broke
+        @cross_origin(origin="*", supports_credentials=True)
         def insert_from_get(query, csv_values):
             user_input = csv_values.split(',')
             res = self.db_connection.execute_insert(query, user_input)
@@ -215,9 +218,9 @@ class BackendRESTAPI():
 
         @app.after_request
         def add_header(response):
-            response.headers["Access-Control-Allow-Origin"] = "*"
+            """ response.headers["Access-Control-Allow-Origin"] = "*"
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization, Origin, X-Requested-With, Accept'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT, PATCH'
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT, PATCH' """
             return response
 
 
