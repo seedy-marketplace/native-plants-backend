@@ -81,7 +81,6 @@ class BackendRESTAPI():
             # return json.jsonify({"header": header, "results": res}) """
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET"]) # this broke
-        @cross_origin(origin="*", supports_credentials=True)
         def insert_from_get(query, csv_values):
             user_input = csv_values.split(',')
             res = self.db_connection.execute_insert(query, user_input)
