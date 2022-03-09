@@ -87,7 +87,7 @@ class BackendRESTAPI():
             if res == "success":
                 return json.jsonify({"result": res})
             else:
-                return json.jsonify({"error": "farm already exists"})
+                return json.jsonify({"error": res})
             # return json.jsonify({"header": header, "results": res})
 
         @app.route("/q/<query>/<user_input>", methods=["GET"])
@@ -167,7 +167,7 @@ class BackendRESTAPI():
                 if success == "success":
                     return json.jsonify({"success": True})
                 else:
-                    return json.jsonify({"error": "Username already exists"})
+                    return json.jsonify({"error": success})
             except KeyError:
                 return json.jsonify({"error": "Missing required key in request"})
 

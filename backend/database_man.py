@@ -52,7 +52,7 @@ class DatabaseConnection():
         print("With user input: ", user_input)
         if type(user_input) is not list:
             print("Invalid type given to execute_insert!")
-            return None
+            return "Invalid type given to execute_insert"
         try:
             # user_input = [self.clean_query(i) for i in user_input] # This was bad anyways
             if (len(user_input) > 0):
