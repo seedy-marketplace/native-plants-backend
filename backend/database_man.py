@@ -50,7 +50,7 @@ class DatabaseConnection():
         # Execute the query and return the results
         print("Executing query: ", query)
         print("With user input: ", user_input)
-        if type(user_input) is not list:
+        if type(user_input) is not list and type(user_input) is not tuple:
             print("Invalid type given to execute_insert!")
             return "Invalid type given to execute_insert"
         try:

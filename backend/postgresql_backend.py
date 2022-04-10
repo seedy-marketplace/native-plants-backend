@@ -87,7 +87,7 @@ class BackendRESTAPI():
             if res == "success":
                 return json.jsonify({"result": res})
             else:
-                return json.jsonify({"error": res})
+                return json.jsonify({"error": res}), 500
             # return json.jsonify({"header": header, "results": res})
 
         @app.route("/q/<query>/<user_input>", methods=["GET"])
@@ -99,23 +99,23 @@ class BackendRESTAPI():
         @app.route("/u/login", methods=["POST"])
         def login():
             # Validate the login
-            re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["username"])
-            re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["password"])
+            # re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["username"])
+            # re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["password"])
             un = request.form["username"]
             pw = request.form["password"]
             # Execute the query
             password_hash = self.db_connection.get_password_hash(un)
             if password_hash is None:
-                return json.jsonify({"error": "Incorrect password or username"})
+                return json.jsonify({"error": "Incorrect password or username"}), 401
             print("nice")
             try:
                 salt, hashed_password = password_hash.split("$")
                 hash_val = hashlib.sha256((self.pepper + salt + pw).encode()).hexdigest()
                 if hash_val == hashed_password:
-                    return json.jsonify({"success": True})
+                    return json.jsonify({"success": True}), 200
             except:
                 pass
-            return json.jsonify({"success": False})
+            return json.jsonify({"success": False}), 401
 
         @app.route("/u/register", methods=["POST"])
         def register():
@@ -123,11 +123,11 @@ class BackendRESTAPI():
                 print(request.form)
                 # Validate the registration
                 if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", request.form["username"]):
-                    return json.jsonify({"error": "Invalid char or length in username"})
+                    return json.jsonify({"error": "Invalid char or length in username"}), 400
                 if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", request.form["password"]):
-                    return json.jsonify({"error": "Invalid char or length in password"})
+                    return json.jsonify({"error": "Invalid char or length in password"}), 400
                 if not re.fullmatch( r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", request.form["email"]):
-                    return json.jsonify({"error": "Bad email"})
+                    return json.jsonify({"error": "Bad email"}), 400
 
                 """everything below this is super gross
                 please make sure to include these fields in your form
@@ -167,7 +167,7 @@ class BackendRESTAPI():
                 if success == "success":
                     return json.jsonify({"success": True})
                 else:
-                    return json.jsonify({"error": success})
+                    return json.jsonify({"error": success}), 500
             except KeyError:
                 return json.jsonify({"error": "Missing required key in request"})
 
