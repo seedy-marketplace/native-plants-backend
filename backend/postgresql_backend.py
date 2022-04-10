@@ -101,8 +101,11 @@ class BackendRESTAPI():
             # Validate the login
             # re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["username"])
             # re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["password"])
-            un = request.form["username"]
-            pw = request.form["password"]
+            try:
+                un = request.form["username"]
+                pw = request.form["password"]
+            except KeyError:
+                return json.jsonify({"error": "Poorly formatted request"}), 400
             # Execute the query
             password_hash = self.db_connection.get_password_hash(un)
             if password_hash is None:
