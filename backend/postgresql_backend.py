@@ -101,9 +101,12 @@ class BackendRESTAPI():
             # Validate the login
             # re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["username"])
             # re.match(r"\$a-zA-Z0-9_]{1,20}", request.form["password"])
+            body = request.get_json()
             try:
-                un = request.form["username"]
-                pw = request.form["password"]
+                un = body["username"]
+                pw = body["password"]
+                # un = request.form["username"]
+                # pw = request.form["password"]
             except KeyError:
                 return json.jsonify({"error": "Poorly formatted request"}), 400
             # Execute the query
