@@ -176,7 +176,7 @@ class BackendRESTAPI():
                 else:
                     return json.jsonify({"error": success}), 500
             except KeyError:
-                return json.jsonify({"error": "Missing required key in request"})
+                return json.jsonify({"error": "Missing required key in request", "body": body}), 400
 
         @app.route("/add/farm", methods=["POST"])
         def add_farm():
