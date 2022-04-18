@@ -125,37 +125,38 @@ class BackendRESTAPI():
 
         @app.route("/u/register", methods=["POST"])
         def register():
+            body = request.get_json()
             try:
                 print(request.form)
                 # Validate the registration
-                if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", request.form["username"]):
+                if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", body["username"]):
                     return json.jsonify({"error": "Invalid char or length in username"}), 400
-                if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", request.form["password"]):
+                if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", body["password"]):
                     return json.jsonify({"error": "Invalid char or length in password"}), 400
-                if not re.fullmatch( r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", request.form["email"]):
+                if not re.fullmatch( r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", body["email"]):
                     return json.jsonify({"error": "Bad email"}), 400
 
                 """everything below this is super gross
                 please make sure to include these fields in your form
                 and post requests so i can delete this """
                 try:
-                    request.form["name"]
+                    body["name"]
                 except:
                     return json.jsonify({"error": "No name provided"})
                 try:
-                    bio = request.form["bio"]
+                    bio = body["bio"]
                 except:
                     bio = ""
                 try:
-                    phone = request.form["phone_number"]
+                    phone = body["phone_number"]
                 except:
                     phone = "0"
                 try:
-                    website = request.form["website"]
+                    website = body["website"]
                 except:
                     website = ""
                 try:
-                    # role_type = request.form["user_role_type"]
+                    # role_type = body["user_role_type"]
                     """ 0 = unapproved, 1 = standard user, 2 = admin """
                     role_type = 0 
                 except:
@@ -164,12 +165,12 @@ class BackendRESTAPI():
                 # Create the salt
                 salt = os.urandom(16).hex()
                 # Hash the password
-                hash_val = hashlib.sha256((self.pepper + salt + request.form["password"]).encode()).hexdigest()
+                hash_val = hashlib.sha256((self.pepper + salt + body["password"]).encode()).hexdigest()
                 password_hash = salt + "$" + hash_val
                 # Execute the query
                 success = self.db_connection.execute_insert("INSERT INTO rev2.users\
                             (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
-                            (request.form["username"], bio, request.form["email"], phone,        website, request.form["name"], role_type,      password_hash))
+                            (body["username"], bio, body["email"], phone,        website, body["name"], role_type,      password_hash))
                 if success == "success":
                     return json.jsonify({"success": True})
                 else:
