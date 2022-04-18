@@ -171,12 +171,13 @@ class BackendRESTAPI():
                 success = self.db_connection.execute_insert("INSERT INTO rev2.users\
                             (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
                             (body["username"], bio, body["email"], phone,        website, body["name"], role_type,      password_hash))
+                print("success=", success)
                 if success == "success":
                     return json.jsonify({"success": True}), 201
-                elif success == "null":
+                elif "pk_users_user_id" in str(success):
                     return json.jsonify({"error": "Username already exists"}), 400
                 else:
-                    return json.jsonify({"error": success}), 500
+                    return json.jsonify({"error": str(success)}), 500
             except KeyError:
                 return json.jsonify({"error": "Missing required key in request", "body": body}), 400
 
