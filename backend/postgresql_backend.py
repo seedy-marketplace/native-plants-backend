@@ -172,7 +172,7 @@ class BackendRESTAPI():
                             (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
                             (body["username"], bio, body["email"], phone,        website, body["name"], role_type,      password_hash))
                 if success == "success":
-                    return json.jsonify({"success": True})
+                    return json.jsonify({"success": True}), 201
                 elif success == "null":
                     return json.jsonify({"error": "Username already exists"}), 400
                 else:
