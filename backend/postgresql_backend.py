@@ -127,7 +127,7 @@ class BackendRESTAPI():
         def register():
             body = request.get_json()
             try:
-                print(request.form)
+                print(body)
                 # Validate the registration
                 if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", body["username"]):
                     return json.jsonify({"error": "Invalid char or length in username"}), 400
