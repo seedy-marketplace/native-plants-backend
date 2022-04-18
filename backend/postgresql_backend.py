@@ -125,8 +125,8 @@ class BackendRESTAPI():
 
         @app.route("/u/register", methods=["POST"])
         def register():
-            body = request.get_json()
             try:
+                body = request.get_json()
                 print(body)
                 # Validate the registration
                 if not re.fullmatch(r"([a-zA-Z0-9_]{1,20}$)", body["username"]):
