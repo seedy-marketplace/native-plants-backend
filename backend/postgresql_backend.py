@@ -39,6 +39,11 @@ class BackendRESTAPI():
         except KeyError:
             print("== MISSING ENV VAR FOR PEPPER ==\n\tSet environment variable PEPPER")
             self.pepper = ""
+        try:
+            self.db_key = os.environ["DATABASE_KEY"]
+        except KeyError:
+            print("== MISSING ENV VAR FOR DATABASE_KEY ==\n\tSet environment variable DATABASE_KEY")
+            self.db_key = ""
         
         def pack_header_to_result_obj(headers, result_lsit):
             res_obj = {'headers': headers}
@@ -55,13 +60,28 @@ class BackendRESTAPI():
             print(res_obj)
             return json.jsonify(res_obj)
 
-        @app.route("/", methods=["GET"])
-        def index():
-            header, res = self.db_connection.execute_query(
-                "SELECT * FROM rev2.users", include_headers=True)
-            return pack_header_to_result_obj(header, res)
+        @app.before_request
+        def before_request():
+            # Require authentication header
+            if self.db_key == "":
+                return json.jsonify({"error": "No database key set"})
+            if request.headers.get('Authentication') is None:
+                return json.jsonify({'error': 'No authentication header'}), 401
+            # Check if the authentication header is valid
+            if request.headers.get('Authentication') != self.db_key:
+                return json.jsonify({'error': 'Invalid authentication header'}), 401
 
-        @app.route("/q/<query>", methods=["GET"])
+
+        @app.route("/", methods=["GET", "POST"])
+        def index():
+            if len(self.pepper > 0): # If pepper is set, then we are in production
+                header, res = self.db_connection.execute_query(
+                    "SELECT * FROM rev2.users", include_headers=True)
+                return pack_header_to_result_obj(header, res)
+            else:
+                return json.jsonify({"error": "Unauthenticated request"}), 401
+
+        @app.route("/q/<query>", methods=["GET", "POST"])
         def query(query):
             header, res = self.db_connection.execute_query(query, include_headers=True)
             return pack_header_to_result_obj(header, res)
@@ -80,7 +100,7 @@ class BackendRESTAPI():
             return json.jsonify({"success": res })
             # return json.jsonify({"header": header, "results": res}) """
 
-        @app.route("/ig/<query>/<csv_values>", methods=["GET"]) # this broke
+        @app.route("/ig/<query>/<csv_values>", methods=["GET", "POST"]) # this broke
         def insert_from_get(query, csv_values):
             user_input = csv_values.split(',')
             try:
@@ -93,7 +113,7 @@ class BackendRESTAPI():
                 return json.jsonify({"error": res}), 500
             # return json.jsonify({"header": header, "results": res})
 
-        @app.route("/q/<query>/<user_input>", methods=["GET"])
+        @app.route("/q/<query>/<user_input>", methods=["GET", "POST"])
         def query_with_input(query, user_input):
             header, res = self.db_connection.execute_query(query, user_input, include_headers=True)
             return pack_header_to_result_obj(header, res)
@@ -244,6 +264,7 @@ class BackendRESTAPI():
             """ response.headers["Access-Control-Allow-Origin"] = "*"
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization, Origin, X-Requested-With, Accept'
             response.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT, PATCH' """
+            print("Authentication:", request.headers.get("Authentication"))
             return response
 
 
