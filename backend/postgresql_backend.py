@@ -83,7 +83,10 @@ class BackendRESTAPI():
         @app.route("/ig/<query>/<csv_values>", methods=["GET"]) # this broke
         def insert_from_get(query, csv_values):
             user_input = csv_values.split(',')
-            res = self.db_connection.execute_insert(query, user_input)
+            try:
+                res = self.db_connection.execute_insert(query, user_input)
+            except errors.SyntaxError:
+                return json.jsonify({"error": "Syntax Error"}), 400
             if res == "success":
                 return json.jsonify({"result": res})
             else:
@@ -225,6 +228,16 @@ class BackendRESTAPI():
                 self.db_connection.rollback()
                 print("error in add collection:", sys.exc_info())
                 return json.jsonify({"success": False})
+
+
+
+        @app.errorhandler(404)
+        def not_found(error):
+            return json.jsonify({"error": "Not found"}), 404
+        @app.errorhandler(500)
+        def internal_error(error):
+            self.db_connection.rollback() # rollback the transaction
+            return json.jsonify({"error": "Internal error"}), 500
 
         @app.after_request
         def add_header(response):
