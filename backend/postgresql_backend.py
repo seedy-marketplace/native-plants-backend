@@ -64,7 +64,7 @@ class BackendRESTAPI():
         def before_request():
             # Require authentication header
             if self.db_key == "":
-                return json.jsonify({"error": "No database key set"})
+                return json.jsonify({"error": "No database key set"}), 500
             if request.headers.get('Authentication') is None:
                 return json.jsonify({'error': 'No authentication header'}), 401
             # Check if the authentication header is valid
@@ -133,7 +133,8 @@ class BackendRESTAPI():
             except KeyError:
                 return json.jsonify({"error": "Poorly formatted request"}), 400
             # Execute the query
-            password_hash = self.db_connection.get_password_hash(un)
+            password_hash, real_name, user_level = self.db_connection.get_password_hash(un)
+            print(password_hash)
             if password_hash is None:
                 return json.jsonify({"error": "Incorrect password or username"}), 401
             print("nice")
@@ -141,7 +142,11 @@ class BackendRESTAPI():
                 salt, hashed_password = password_hash.split("$")
                 hash_val = hashlib.sha256((self.pepper + salt + pw).encode()).hexdigest()
                 if hash_val == hashed_password:
-                    return json.jsonify({"success": True}), 200
+                    return json.jsonify({
+                        "success": True,
+                        "real_name": real_name,
+                        "user_level": user_level
+                    }), 200
             except:
                 pass
             return json.jsonify({"success": False}), 401

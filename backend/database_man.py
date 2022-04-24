@@ -75,11 +75,13 @@ class DatabaseConnection():
         # Get the password hash for a user
         username = self.clean_query(username)
         print(f'username={username}')
-        self.cursor.execute("SELECT password_hash FROM rev2.users WHERE user_name = %s", [username])
+        self.cursor.execute("SELECT password_hash, name, user_role_type FROM rev2.users WHERE user_name = %s", [username])
+        res = self.cursor.fetchone()
+        print(f'res={res}')
         try:
-           return self.cursor.fetchone()[0]
+           return res[0], res[1], res[2]
         except TypeError:
-            return None
+            return None, None, None
     def close_connection(self):
         self.connection.close()
     def clean_query(self, query):
