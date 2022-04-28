@@ -254,7 +254,7 @@ class BackendRESTAPI():
                 print("error in add collection:", sys.exc_info())
                 return json.jsonify({"success": False})
                 
-        @app.after_request
+        @app.route("/collector/add-osb", methods=["POST"])
         def add_OSB_Managed_Meadow_Habitat():
             try:
                 DatabaseConnection.execute_insert("""INSERT INTO rev2.OSB_Managed_Meadow_Habitat
@@ -266,7 +266,7 @@ class BackendRESTAPI():
                 print("error in add collection:", sys.exc_info())
                 return json.jsonify({"success": False})
 
-        @app.after_request      
+        @app.route("/osb/", methods=["GET"])    
         def query_OSB_Managed_Meadow_Habitat():
             header1, res1 = self.db_connection.execute_query("""SELECT a.genus,a.species,a.common_name,b.plant_species_code,c.point_of_collection,d.stand_type,e.owner_username,e.collection_site_name,f.collected_date,g.storage_type FROM rev2.plant a left join stand_to_plant_mapping b ON a.species_code = b.plant_species_code left join stand_collection_history c ON c.stand_plant_map_id = b.stand_plant_id left join stand d ON b.stand_id = d.stand_id_num left join site e ON e.site_id = d.encompassing_site_id left join seed_collection f ON f.col_provenance = e.site_id left join storage_history g ON g.stored_collection = f.collection_id""", include_headers=True)
 
@@ -274,25 +274,27 @@ class BackendRESTAPI():
             
         def pack_result_obj(headers1, res1):
      
+            featrues = []
             for i, row in enumerate(res1):
-             genus = row[0]
-             species = row[1]
-             point_of_collection = row[2]
-             stand_type = row[3]
-             owner_username = row[4]
-             collection_site_name = row[5]
-             collected_date = row[6]
-             storage_type = row[7]
-             
-             geometry = {'type':'Polygon','coordinates':point_of_collection}
-             properties = {'FID':i,'genus':genus,'species':species,'stand_type':stand_type,'owner_username':owner_username,'collection_site_name':collection_site_name,'collected_date':collected_date,'storage_type':storage_type}
-             features[i] = {'type':'Feature','id':i,'geometry':geometry,'properties':properties}
-            print convert_to_json_string1(features)
+                genus = row[0]
+                species = row[1]
+                point_of_collection = row[2]
+                stand_type = row[3]
+                owner_username = row[4]
+                collection_site_name = row[5]
+                collected_date = row[6]
+                storage_type = row[7]
+                
+                geometry = {'type':'Polygon','coordinates':point_of_collection}
+                properties = {'FID':i,'genus':genus,'species':species,'stand_type':stand_type,'owner_username':owner_username,'collection_site_name':collection_site_name,'collected_date':collected_date,'storage_type':storage_type}
+                features.append({'type':'Feature','id':i,'geometry':geometry,'properties':properties})
+            # print convert_to_json_string1(features)
             data = {'type':'FeatureCollection','crs':'{"type": "name","properties": {"name": "EPSG:4326"}}','features':features}
-            with codecs.open("C:\\Users\\User\\Desktop\\OSB_Managed_Meadow_Habitat.json","a+",encoding='utf-8') as f:
-             json.dump(data,f,indent=4,encoding='utf-8',ensure_ascii=False)
-            except Exception , e:
-            print "Dbinsert "+str(e)
+            # with codecs.open("C:\\Users\\User\\Desktop\\OSB_Managed_Meadow_Habitat.json","a+",encoding='utf-8') as f:
+            #  json.dump(data,f,indent=4,encoding='utf-8',ensure_ascii=False)
+
+            print(data)
+            return json.jsonify(data)
 
 
 
