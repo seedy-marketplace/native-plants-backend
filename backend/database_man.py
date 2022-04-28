@@ -66,15 +66,22 @@ class DatabaseConnection():
             print(f'Error {e}')
             self.connection.rollback()
             return e
+        except Exception as e:
+            print(f'Error {e}')
+            print(e)
+            self.connection.rollback()
+            return "Syntax error. Query unable to be executed."
     def get_password_hash(self, username):
         # Get the password hash for a user
         username = self.clean_query(username)
         print(f'username={username}')
-        self.cursor.execute("SELECT password_hash FROM rev2.users WHERE user_name = %s", [username])
+        self.cursor.execute("SELECT password_hash, name, user_role_type FROM rev2.users WHERE user_name = %s", [username])
+        res = self.cursor.fetchone()
+        print(f'res={res}')
         try:
-           return self.cursor.fetchone()[0]
+           return res[0], res[1], res[2]
         except TypeError:
-            return None
+            return None, None, None
     def close_connection(self):
         self.connection.close()
     def clean_query(self, query):
@@ -84,6 +91,8 @@ class DatabaseConnection():
         if isinstance(query, str):
             return query.replace("'", "''")
         return query
+    def rollback(self):
+        self.connection.rollback()
     def default(self, o):
         # Override the default json serialization for decimal type
         if isinstance(o, Decimal):
