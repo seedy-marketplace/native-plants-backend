@@ -268,11 +268,11 @@ class BackendRESTAPI():
 
         @app.route("/osb", methods=["GET"])    
         def query_OSB_Managed_Meadow_Habitat():
-            header1, res1 = self.db_connection.execute_query("""SELECT a.genus,a.species,a.common_name,b.plant_species_code,c.point_of_collection,d.stand_type,e.owner_username,e.collection_site_name,f.collected_date,g.storage_type FROM rev2.plant a left join stand_to_plant_mapping b ON a.species_code = b.plant_species_code left join stand_collection_history c ON c.stand_plant_map_id = b.stand_plant_id left join stand d ON b.stand_id = d.stand_id_num left join site e ON e.site_id = d.encompassing_site_id left join seed_collection f ON f.col_provenance = e.site_id left join storage_history g ON g.stored_collection = f.collection_id""", include_headers=True)
+            res1 = self.db_connection.execute_query("""SELECT a.genus,a.species,a.common_name,b.plant_species_code,c.point_of_collection,d.stand_type,e.owner_username,e.collection_site_name,f.collected_date,g.storage_type FROM rev2.plant a left join stand_to_plant_mapping b ON a.species_code = b.plant_species_code left join stand_collection_history c ON c.stand_plant_map_id = b.stand_plant_id left join stand d ON b.stand_id = d.stand_id_num left join site e ON e.site_id = d.encompassing_site_id left join seed_collection f ON f.col_provenance = e.site_id left join storage_history g ON g.stored_collection = f.collection_id""", include_headers=False)
 
-            return pack_result_obj(header1, res1)
+            return pack_result_obj(res1)
             
-        def pack_result_obj(headers1, res1):
+        def pack_result_obj(res1):
      
             featrues = []
             for i, row in enumerate(res1):
