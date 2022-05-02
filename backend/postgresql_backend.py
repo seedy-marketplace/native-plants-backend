@@ -74,12 +74,12 @@ class BackendRESTAPI():
 
         @app.route("/", methods=["GET", "POST"])
         def index():
-            if len(self.pepper > 0): # If pepper is set, then we are in production
+            if len(self.pepper) > 0: # If pepper is set, then we are in production
                 header, res = self.db_connection.execute_query(
                     "SELECT * FROM rev2.users", include_headers=True)
                 return pack_header_to_result_obj(header, res)
             else:
-                return json.jsonify({"error": "Unauthenticated request"}), 401
+                return json.jsonify({"error": "This path is not allowed on production builds"}), 401
 
         @app.route("/q/<query>", methods=["GET", "POST"])
         def query(query):
