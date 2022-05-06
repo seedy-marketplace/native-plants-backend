@@ -274,19 +274,17 @@ class BackendRESTAPI():
             
         def pack_result_obj(res1):
      
-            featrues = []
+            features = []
             for i, row in enumerate(res1):
                 genus = row[0]
                 species = row[1]
-                point_of_collection = row[2]
-                stand_type = row[3]
-                owner_username = row[4]
-                collection_site_name = row[5]
-                collected_date = row[6]
-                storage_type = row[7]
+                common_name = row[2]
+                plant_species_code = row[3]
+                point_of_collection = row[4]
+                
                 
                 geometry = {'type':'Polygon','coordinates':point_of_collection}
-                properties = {'FID':i,'genus':genus,'species':species,'stand_type':stand_type,'owner_username':owner_username,'collection_site_name':collection_site_name,'collected_date':collected_date,'storage_type':storage_type}
+                properties = {'FID':i,'genus':genus,'species':species,'common_name':common_name,'plant_species_code':plant_species_code}
                 features.append({'type':'Feature','id':i,'geometry':geometry,'properties':properties})
             # print convert_to_json_string1(features)
             data = {'type':'FeatureCollection','crs':'{"type": "name","properties": {"name": "EPSG:4326"}}','features':features}
