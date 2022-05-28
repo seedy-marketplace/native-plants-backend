@@ -103,6 +103,8 @@ class BackendRESTAPI():
         @app.route("/ig/<query>/<csv_values>", methods=["GET", "POST"]) # this broke
         def insert_from_get(query, csv_values):
             user_input = csv_values.split(',')
+            for i in range(len(user_input)):
+                user_input[i] = user_input[i].replace('@@', ',')
             try:
                 res = self.db_connection.execute_insert(query, user_input)
             except errors.SyntaxError:
