@@ -10,3 +10,5 @@ Run:
    * DATABASE_KEY
 * Run python3.9 backend/postgresql_backend.py
    * Or whatever python alias points to a sufficiently updated python version
+
+[Project Backlog](https://github.com/orgs/seedy-marketplace/projects/1/views/1)
