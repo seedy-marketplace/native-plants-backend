@@ -87,12 +87,13 @@ class BackendRESTAPI():
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
         
-        """ @app.route("/i/<query>", methods=["POST"]) # this broke
-        def insert(query):
-            res = self.db_connection.execute_insert(query, '')
+        @app.route("/i/<query>/<values>", methods=["POST"]) # this broke
+        def insert(query, values):
+            user_input = values.split(",")
+            res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"result": res})
             # return json.jsonify({"header": header, "results": res})
-        
+        """
         @app.route("/i/<query>/<csv_values>", methods=["POST"])
         def insert_with_input(query, csv_values):
             user_input = csv_values.split(',')
