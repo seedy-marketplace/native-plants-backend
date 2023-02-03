@@ -87,11 +87,20 @@ class BackendRESTAPI():
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
         
-        @app.route("/i/<query>/<values>", methods=["POST"]) # this broke
+        @app.route("/i/<query>", methods=["POST"]) # this broke
         @cross_origin()
-        def insert(query, values):
-            print("Got query: ", query)
-            user_input = values.split(",")
+        def insert(query):
+            
+            print("Got INSERT query: " + str(query))
+            body = request.get_json()
+            print("Got body: ")
+            print(body)
+            values = body["values"]
+            print(values)
+            #print("Values: " + str(body.values))
+            #for value in body.values:
+            #    print(value)
+            user_input = values#.split(",")
             res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"result": res})
             # return json.jsonify({"header": header, "results": res})
