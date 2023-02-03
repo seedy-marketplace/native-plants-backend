@@ -90,6 +90,7 @@ class BackendRESTAPI():
         @app.route("/i/<query>/<values>", methods=["POST"]) # this broke
         @cross_origin()
         def insert(query, values):
+            print("Got query: ", query)
             user_input = values.split(",")
             res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"result": res})
