@@ -19,7 +19,7 @@ except ModuleNotFoundError:
 app = Flask(__name__)  # Create the flask app
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True  # Pretty print json with newlines
-cors = CORS(app, supports_credentials=True)
+cors = CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 
 def grab_val(request, value):
