@@ -87,19 +87,34 @@ class BackendRESTAPI():
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
         
-        @app.route("/i/<query>", methods=["POST"]) # this broke
+        @app.route("/i", methods=["POST"]) # this broke
         @cross_origin()
-        def insert(query):
+        def insert():
             
-            print("Got INSERT query: " + str(query))
+            
             body = request.get_json()
             print("Got body: ")
             print(body)
+            table_name = body["table_name"]
+            num_columns = body["num_columns"]
+            columns = body["columns"]
             values = body["values"]
+
+            query_columns = ""
+            query_values = ""
+            for i in range(len(columns) - 1): 
+                query_columns += (str(columns[i]) + ",")
+                query_values += ("%" + "s" + ",")
+
+            query_columns += str(columns[len(columns)-1])
+            query_values += ("%" + "s")
+            query = "INSERT INTO " + str(table_name) + " (" + str(query_columns) + ") VALUES (" + query_values + ")"
             print(values)
             #print("Values: " + str(body.values))
             #for value in body.values:
             #    print(value)
+
+            print("Got INSERT query: " + str(query))
             user_input = values#.split(",")
             res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"result": res})
