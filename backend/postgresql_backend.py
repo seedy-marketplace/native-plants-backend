@@ -87,14 +87,12 @@ class BackendRESTAPI():
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
         
-        @app.route("/i", methods=["POST"]) # this broke
+
+        #Re-written to work now
+        @app.route("/i", methods=["POST"])
         @cross_origin()
         def insert():
-            
-            
-            body = request.get_json()
-            print("Got body: ")
-            print(body)
+            body = request.get_json()#Get the values from the request body
             table_name = body["table_name"]
             num_columns = body["num_columns"]
             columns = body["columns"]
@@ -102,30 +100,21 @@ class BackendRESTAPI():
 
             query_columns = ""
             query_values = ""
-            for i in range(len(columns) - 1): 
+            for i in range(len(columns) - 1): #converts the arrays into strings for the query
                 query_columns += (str(columns[i]) + ",")
                 query_values += ("%" + "s" + ",")
 
             query_columns += str(columns[len(columns)-1])
             query_values += ("%" + "s")
+            #Builds the query string:
             query = "INSERT INTO " + str(table_name) + " (" + str(query_columns) + ") VALUES (" + query_values + ")"
-            print(values)
-            #print("Values: " + str(body.values))
-            #for value in body.values:
-            #    print(value)
 
             print("Got INSERT query: " + str(query))
-            user_input = values#.split(",")
+            user_input = values#Get the values to pass to the request
             res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"result": res})
             # return json.jsonify({"header": header, "results": res})
-        """
-        @app.route("/i/<query>/<csv_values>", methods=["POST"])
-        def insert_with_input(query, csv_values):
-            user_input = csv_values.split(',')
-            res = self.db_connection.execute_insert(query, user_input)
-            return json.jsonify({"success": res })
-            # return json.jsonify({"header": header, "results": res}) """
+        
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET", "POST"]) # this broke
         def insert_from_get(query, csv_values):
