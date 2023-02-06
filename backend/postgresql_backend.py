@@ -94,7 +94,6 @@ class BackendRESTAPI():
         def insert():
             body = request.get_json()#Get the values from the request body
             table_name = body["table_name"]
-            num_columns = body["num_columns"]
             columns = body["columns"]
             values = body["values"]
 
