@@ -114,6 +114,17 @@ class BackendRESTAPI():
             return json.jsonify({"result": res})
             # return json.jsonify({"header": header, "results": res})
         
+        
+        @app.route("/d", methods=["POST"])
+        @cross_origin()
+        def delete():
+            body = request.get_json()
+            table_name = body["table_name"]
+            where = body["where"]
+            query = "DELETE FROM " + str(table_name) + str(where)
+            print("Got DELETE query: " + str(query))
+            res = self.db_connection.execute_delete(query)
+            return json.jsonify({"result": res})
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET", "POST"]) # this broke
         def insert_from_get(query, csv_values):
