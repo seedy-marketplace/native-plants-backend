@@ -81,8 +81,12 @@ class BackendRESTAPI():
             else:
                 return json.jsonify({"error": "This path is not allowed on production builds"}), 401
 
-        @app.route("/q/<query>", methods=["GET", "POST"])
-        def query(query):
+        @app.route("/q", methods=["GET", "POST"])
+        def query():
+            body = request.get_json()
+            query = body["query"]
+            print(f"Got Query: ")
+            print(query)
             header, res = self.db_connection.execute_query(query, include_headers=True)
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
@@ -126,7 +130,7 @@ class BackendRESTAPI():
             res = self.db_connection.execute_delete(query)
             return json.jsonify({"result": res})
         
-        @app.route("/up", methods=["UPDATE", "POST"])
+        @app.route("/up", methods=["PATCH", "POST"])
         def update():
             body = request.get_json()
             table_name = body["table_name"]
