@@ -90,6 +90,23 @@ class DatabaseConnection():
             return "Syntax error. Query unable to be executed"
         
         
+    #new database update method
+    def execute_update(self, query : str):
+        try:
+            print(f'query={query}')
+            self.cursor.execute(query)
+            self.connection.commit()
+            return "success"
+        except db_con.errors.UniqueViolation as e:
+            print(f'Error {e}')
+            self.connection.rollback()
+            return e
+        except Exception as e:
+            print(f'Error {e}')
+            print(e)
+            self.connection.rollback()
+            return "Syntax error. Query unable to be executed"
+        
     def get_password_hash(self, username):
         # Get the password hash for a user
         username = self.clean_query(username)

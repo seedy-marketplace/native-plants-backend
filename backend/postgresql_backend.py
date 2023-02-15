@@ -115,7 +115,7 @@ class BackendRESTAPI():
             # return json.jsonify({"header": header, "results": res})
         
         
-        @app.route("/d", methods=["POST"])
+        @app.route("/d", methods=["DELETE", "POST"])
         @cross_origin()
         def delete():
             body = request.get_json()
@@ -125,6 +125,26 @@ class BackendRESTAPI():
             print("Got DELETE query: " + str(query))
             res = self.db_connection.execute_delete(query)
             return json.jsonify({"result": res})
+        
+        @app.route("/up", methods=["UPDATE", "POST"])
+        def update():
+            body = request.get_json()
+            table_name = body["table_name"]
+            columns = body["columns"]
+            values = body["values"]
+            where = body["where"]
+            sets = ""
+            for i in range(len(columns)):
+                sets += columns[i] + " = '" + values[i] + "'"
+                if(i < len(columns) - 1):
+                    sets += ", "
+            
+            
+            query = "UPDATE " + table_name + " SET " + sets + where
+            print("Got update query: ", query)
+            res = self.db_connection.execute_update(query)
+            return json.jsonify({"result": res})
+            
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET", "POST"]) # this broke
         def insert_from_get(query, csv_values):
@@ -140,6 +160,8 @@ class BackendRESTAPI():
             else:
                 return json.jsonify({"error": res}), 500
             # return json.jsonify({"header": header, "results": res})
+            
+       
 
         @app.route("/q/<query>/<user_input>", methods=["GET", "POST"])
         def query_with_input(query, user_input):
