@@ -33,7 +33,9 @@ class DatabaseConnection():
     def execute_query(self, query, user_input="", include_headers=False):
         # Execute the query and return the results
         try:
-            user_input = [self.clean_query(i) for i in user_input]            
+            user_input = [self.clean_query(i) for i in user_input]    
+            self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+            self.cursor = self.connection.cursor()        
             self.cursor.execute(query, user_input)
             if include_headers:
                 columns = [column[0] for column in self.cursor.description]
