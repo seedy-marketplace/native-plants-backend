@@ -58,9 +58,13 @@ class DatabaseConnection():
         try:
             # user_input = [self.clean_query(i) for i in user_input] # This was bad anyways
             if (len(user_input) > 0):
+                self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+                self.cursor = self.connection.cursor()  
                 self.cursor.execute(query, user_input)
             else:
                 print(f'query={query}')
+                self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+                self.cursor = self.connection.cursor()  
                 self.cursor.execute(query)
             self.connection.commit()
             return "success"
@@ -78,6 +82,8 @@ class DatabaseConnection():
     def execute_delete(self, query : str):
         try:
             print(f'query={query}')
+            self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+            self.cursor = self.connection.cursor()  
             self.cursor.execute(query)
             self.connection.commit()
             return "success"
@@ -96,6 +102,8 @@ class DatabaseConnection():
     def execute_update(self, query : str):
         try:
             print(f'query={query}')
+            self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+            self.cursor = self.connection.cursor()  
             self.cursor.execute(query)
             self.connection.commit()
             return "success"
@@ -113,6 +121,8 @@ class DatabaseConnection():
         # Get the password hash for a user
         username = self.clean_query(username)
         print(f'username={username}')
+        self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+        self.cursor = self.connection.cursor()  
         self.cursor.execute("SELECT password_hash, name, user_role_type FROM rev2.users WHERE user_name = %s", [username])
         res = self.cursor.fetchone()
         print(f'res={res}')
