@@ -19,7 +19,7 @@ except ModuleNotFoundError:
 app = Flask(__name__)  # Create the flask app
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True  # Pretty print json with newlines
-cors = CORS(app, supports_credentials=True)
+cors = CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 
 def grab_val(request, value):
@@ -81,24 +81,74 @@ class BackendRESTAPI():
             else:
                 return json.jsonify({"error": "This path is not allowed on production builds"}), 401
 
-        @app.route("/q/<query>", methods=["GET", "POST"])
-        def query(query):
+        @app.route("/q", methods=["GET", "POST"])
+        def query():
+            body = request.get_json()
+            query = body["query"]
+            print(f"Got Query: ")
+            print(query)
             header, res = self.db_connection.execute_query(query, include_headers=True)
             return pack_header_to_result_obj(header, res)
             # return json.jsonify({"header": header, "results": res})
         
-        """ @app.route("/i/<query>", methods=["POST"]) # this broke
-        def insert(query):
-            res = self.db_connection.execute_insert(query, '')
+
+        #Re-written to work now
+        @app.route("/i", methods=["POST"])
+        @cross_origin()
+        def insert():
+            body = request.get_json()#Get the values from the request body
+            table_name = body["table_name"]
+            columns = body["columns"]
+            values = body["values"]
+
+            query_columns = ""
+            query_values = ""
+            for i in range(len(columns) - 1): #converts the arrays into strings for the query
+                query_columns += (str(columns[i]) + ",")
+                query_values += ("%" + "s" + ",")
+
+            query_columns += str(columns[len(columns)-1])
+            query_values += ("%" + "s")
+            #Builds the query string:
+            query = "INSERT INTO " + str(table_name) + " (" + str(query_columns) + ") VALUES (" + query_values + ")"
+
+            print("Got INSERT query: " + str(query))
+            user_input = values#Get the values to pass to the request
+            res = self.db_connection.execute_insert(query, user_input)
             return json.jsonify({"result": res})
             # return json.jsonify({"header": header, "results": res})
         
-        @app.route("/i/<query>/<csv_values>", methods=["POST"])
-        def insert_with_input(query, csv_values):
-            user_input = csv_values.split(',')
-            res = self.db_connection.execute_insert(query, user_input)
-            return json.jsonify({"success": res })
-            # return json.jsonify({"header": header, "results": res}) """
+        
+        @app.route("/d", methods=["DELETE", "POST"])
+        @cross_origin()
+        def delete():
+            body = request.get_json()
+            table_name = body["table_name"]
+            where = body["where"]
+            query = "DELETE FROM " + str(table_name) + str(where)
+            print("Got DELETE query: " + str(query))
+            res = self.db_connection.execute_delete(query)
+            return json.jsonify({"result": res})
+        
+        @app.route("/up", methods=["PATCH", "POST"])
+        def update():
+            body = request.get_json()
+            table_name = body["table_name"]
+            columns = body["columns"]
+            values = body["values"]
+            where = body["where"]
+            sets = ""
+            for i in range(len(columns)):
+                sets += columns[i] + " = '" + values[i] + "'"
+                if(i < len(columns) - 1):
+                    sets += ", "
+            
+            
+            query = "UPDATE " + table_name + " SET " + sets + where
+            print("Got update query: ", query)
+            res = self.db_connection.execute_update(query)
+            return json.jsonify({"result": res})
+            
 
         @app.route("/ig/<query>/<csv_values>", methods=["GET", "POST"]) # this broke
         def insert_from_get(query, csv_values):
@@ -114,6 +164,8 @@ class BackendRESTAPI():
             else:
                 return json.jsonify({"error": res}), 500
             # return json.jsonify({"header": header, "results": res})
+            
+       
 
         @app.route("/q/<query>/<user_input>", methods=["GET", "POST"])
         def query_with_input(query, user_input):

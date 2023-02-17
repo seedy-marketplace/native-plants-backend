@@ -33,7 +33,9 @@ class DatabaseConnection():
     def execute_query(self, query, user_input="", include_headers=False):
         # Execute the query and return the results
         try:
-            user_input = [self.clean_query(i) for i in user_input]            
+            user_input = [self.clean_query(i) for i in user_input]    
+            self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
+            self.cursor = self.connection.cursor()        
             self.cursor.execute(query, user_input)
             if include_headers:
                 columns = [column[0] for column in self.cursor.description]
@@ -71,6 +73,42 @@ class DatabaseConnection():
             print(e)
             self.connection.rollback()
             return "Syntax error. Query unable to be executed."
+        
+    #new database delete method
+    def execute_delete(self, query : str):
+        try:
+            print(f'query={query}')
+            self.cursor.execute(query)
+            self.connection.commit()
+            return "success"
+        except db_con.errors.UniqueViolation as e:
+            print(f'Error {e}')
+            self.connection.rollback()
+            return e
+        except Exception as e:
+            print(f'Error {e}')
+            print(e)
+            self.connection.rollback()
+            return "Syntax error. Query unable to be executed"
+        
+        
+    #new database update method
+    def execute_update(self, query : str):
+        try:
+            print(f'query={query}')
+            self.cursor.execute(query)
+            self.connection.commit()
+            return "success"
+        except db_con.errors.UniqueViolation as e:
+            print(f'Error {e}')
+            self.connection.rollback()
+            return e
+        except Exception as e:
+            print(f'Error {e}')
+            print(e)
+            self.connection.rollback()
+            return "Syntax error. Query unable to be executed"
+        
     def get_password_hash(self, username):
         # Get the password hash for a user
         username = self.clean_query(username)
