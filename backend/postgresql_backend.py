@@ -238,6 +238,10 @@ class BackendRESTAPI():
                 except:
                     website = ""
                 try:
+                    related_org_id = body["related_org_id"]
+                except:
+                    related_org_id = 0
+                try:
                     # role_type = body["user_role_type"]
                     """ 0 = unapproved, 1 = standard user, 2 = admin """
                     role_type = 0 
@@ -251,8 +255,8 @@ class BackendRESTAPI():
                 password_hash = salt + "$" + hash_val
                 # Execute the query
                 success = self.db_connection.execute_insert("INSERT INTO rev2.users\
-                            (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
-                            (body["username"], bio, body["email"], phone,        website, body["name"], role_type,      password_hash))
+                            (user_name,                bio, email,                 phone_number, website, name,                 user_role_type, password_hash, related_org_id) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                            (body["username"], bio, body["email"], phone,        website, body["name"], role_type,      password_hash, related_org_id))
                 print("success=", success)
                 if success == "success":
                     return json.jsonify({"success": True}), 201
