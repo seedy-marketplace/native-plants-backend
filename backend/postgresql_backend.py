@@ -198,6 +198,7 @@ class BackendRESTAPI():
                 if hash_val == hashed_password:
                     return json.jsonify({
                         "success": True,
+                        "username": un,
                         "real_name": real_name,
                         "user_level": user_level
                     }), 200
