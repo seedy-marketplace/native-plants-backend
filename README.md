@@ -50,8 +50,8 @@ Push Updates to Heroku
 Link To Running Website
 * https://native-plants-fe.herokuapp.com/
 Link to Repos:
-* https://github.com/RoryMoeller/native-plants-backend
-* https://github.com/RoryMoeller/native-plants-frontend
+* https://github.com/seedy-marketplace/native-plants-backend
+* https://github.com/seedy-marketplace/native-plants-frontend
 List of unrealized features:
 * User edditing of organizations and their properties
 * Mapping & Search through Map
