@@ -63,5 +63,6 @@ List of unrealized features:
 * Bulk import seed collection
 * Enable users to update user info
 * Set up organizations
+* Nursery search
 
 
