@@ -14,6 +14,7 @@ Run:
 
 [Project Backlog](https://github.com/orgs/seedy-marketplace/projects/1/views/1)
 
+[Project Planning and Documentation](https://drive.google.com/drive/folders/1ivcA0_8ouJqmQ-Y3_hFjtCpC_T124ceZ?usp=share_link)
 
 All Software (can be found in both READMEs)
 * Heroku server (Backend–With PostGIS database added, Frontend)
