@@ -53,6 +53,7 @@ Link To Running Website
 Link to Repos:
 * https://github.com/seedy-marketplace/native-plants-backend
 * https://github.com/seedy-marketplace/native-plants-frontend
+
 List of unrealized features:
 * User edditing of organizations and their properties
 * Mapping & Search through Map
