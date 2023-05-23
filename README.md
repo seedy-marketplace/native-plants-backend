@@ -59,4 +59,5 @@ List of unrealized features:
 * Mapping & Search through Map
 * Interaction tracking
 * Lab involvement
+* bulk import seed collection
 
