@@ -58,4 +58,3 @@ List of unrealized features:
 * Interaction tracking
 * Lab involvement
 
-Code used by the previous team and is unused in final product has been marked with a comment saying "archived code". We did not wish to risk removing it. 
