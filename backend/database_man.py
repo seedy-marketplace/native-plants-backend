@@ -127,9 +127,9 @@ class DatabaseConnection():
         res = self.cursor.fetchone()
         print(f'res={res}')
         try:
-           return res[0], res[1], res[2]
+           return res[0], res[1], res[2], res[3]
         except TypeError:
-            return None, None, None
+            return None, None, None, None
     def close_connection(self):
         self.connection.close()
     def clean_query(self, query):
