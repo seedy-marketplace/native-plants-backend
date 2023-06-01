@@ -246,7 +246,7 @@ class BackendRESTAPI():
                 try:
                     # role_type = body["user_role_type"]
                     """ 0 = unapproved, 1 = standard user, 2 = admin """
-                    role_type = 1
+                    role_type = 0
                 except:
                     role_type = "0"
                 
