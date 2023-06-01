@@ -187,7 +187,7 @@ class BackendRESTAPI():
             except KeyError:
                 return json.jsonify({"error": "Poorly formatted request"}), 400
             # Execute the query
-            password_hash, real_name, user_level = self.db_connection.get_password_hash(un)
+            password_hash, real_name, user_level, related_org_id = self.db_connection.get_password_hash(un)
             print(password_hash)
             if password_hash is None:
                 return json.jsonify({"error": "Incorrect password or username"}), 401
@@ -200,7 +200,8 @@ class BackendRESTAPI():
                         "success": True,
                         "username": un,
                         "real_name": real_name,
-                        "user_level": user_level
+                        "user_level": user_level,
+                        "related_org_id": related_org_id
                     }), 200
             except:
                 pass
