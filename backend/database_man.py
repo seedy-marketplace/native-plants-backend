@@ -123,7 +123,7 @@ class DatabaseConnection():
         print(f'username={username}')
         self.connection = db_con.connect(self.DATABASE_URL, sslmode='require')
         self.cursor = self.connection.cursor()  
-        self.cursor.execute("SELECT password_hash, name, user_role_type FROM rev2.users WHERE user_name = %s", [username])
+        self.cursor.execute("SELECT password_hash, name, user_role_type, related_org_id FROM rev2.users WHERE user_name = %s", [username])
         res = self.cursor.fetchone()
         print(f'res={res}')
         try:
