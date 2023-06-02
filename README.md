@@ -17,6 +17,7 @@ Environment Information
 
 List of Steps to Run Project
 Run Locally
+ 
  Front-end
 * Clone repo
 * Run “npm i”
